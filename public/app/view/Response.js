@@ -14,14 +14,14 @@ Ext.define("AirJukeBox.view.Response", {
 
         var good = {
             xtype: "label",
-            html : 'GOOD',
+            html : 'Yeah, you rocks !',
             id: 'goodLabel',
             hidden:true
         };
 
         var bad = {
             xtype: "label",
-            html : 'BAD',
+            html : 'Pas assez rapide ...',
             id: 'badLabel',
             hidden:true
         };

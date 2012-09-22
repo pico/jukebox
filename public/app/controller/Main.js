@@ -1,6 +1,6 @@
 Ext.define("AirJukeBox.controller.Main", {
     extend: "Ext.app.Controller",
-    requires: [ 'Ext.MessageBox' ],
+    requires: [ 'Ext.MessageBox', 'Ext.Anim'],
     config: {
         refs: {
             // We're going to lookup our views by xtype.
@@ -37,7 +37,7 @@ Ext.define("AirJukeBox.controller.Main", {
        } else {
             this.socket.emit('add-player', this.getNameField().getValue());
 
-            this.playerName = this.getNameField().getValue();
+            this.playerName = this.getNameField().getValue().toLowerCase();
 
             // Switch view
             Ext.Viewport.setActiveItem(1);
@@ -73,16 +73,17 @@ Ext.define("AirJukeBox.controller.Main", {
             console.log('Disconnect');
         });
 
-        socket.on('good-response', function (playerName) {
+        socket.on('good-response', function (playerKey, name) {
             // Switch screen
             //Ext.Viewport.animateActiveItem(controller.getResponseView(), controller.slideLeftTransition);
             Ext.Viewport.setActiveItem(2);
             // Switch
-            if(playerName == controller.playerName) {
+            if(playerKey == controller.playerName) {
                 // Display try again
                 controller.getGoodResponse().show();
                 controller.getBadResponse().hide();
             } else {
+                controller.getBadResponse().setHtml('Pas assez rapide, ' + name + ' a gagné');
                 controller.getBadResponse().show();
                 controller.getGoodResponse().hide();
             }
@@ -92,15 +93,24 @@ Ext.define("AirJukeBox.controller.Main", {
             if(playerName == controller.playerName) {
                 // Display try again
                 controller.getTryAgain().show();
+
+                Ext.Anim.run(controller.getTryAgain(), 'fade', {
+                    out: true,
+                    duration: 500,
+                    delay:2000,
+                    autoClear: false
+                });
             }
         });
 
         socket.on('new-song', function () {
             if(controller.currentScreen == 'question') {
                 // Stay on
+                controller.getTryAgain().hide();
             } else {
                 // Switch screen
                 Ext.Viewport.setActiveItem(1);
+                controller.getTryAgain().hide();
                 //Ext.Viewport.animateActiveItem(controller.getQuestionView(), controller.slideLeftTransition);
             }
         });

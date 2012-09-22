@@ -39,7 +39,12 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('good-response-given', function (playerName) {
-		io.sockets.emit('good-response', playerName);
+		if(typeof(players[playerName]) != 'undefined') {
+			// Add player
+			players[playerName].points++;
+			io.sockets.emit('update-users', players);
+		}
+		io.sockets.emit('good-response', playerName ,players[playerName].name);
 		//socket.broadcast.emit('update-song', uri, name);
 	});
 
