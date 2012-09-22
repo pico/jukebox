@@ -1,0 +1,50 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+(function ($, jQuery, document, console) {
+"use strict";
+
+jQuery(document).ready(function(){
+	var socket = io.connect('/');
+
+	// on connection to server, ask for user's name with an anonymous callback
+	socket.on('connect', function(){
+		console.log('Connexion success');
+
+		$('[data-rel="status"]').html('Connecté');
+	});
+
+	socket.on('disconnect', function(){
+		console.log('Disconnect');
+
+		$('[data-rel="status"]').html('Disconnect');
+	});
+
+	// on change of song
+	socket.on('update-song', function (uri, name) {
+		console.log('update-song : ' + name + ' | ' + uri);
+
+		$('[data-rel="current-song"]').html(name);
+	});
+
+	// when the client clicks SEND
+	$('[data-rel="song"]').unbind('click').click( function() {
+		var uri = $(this).attr('data-uri');
+		var name = $(this).html();
+
+		socket.emit('change-song', uri, name);
+		console.log('Change song : ' + name);
+	});
+});
+})($, jQuery, document, console);
+
+</script>
+<h1>Choisissez votre musique : </h1>
+<div>
+	<ul>
+		<li data-rel="song" data-uri="spotify:track:3PvvsoGjRyF7YhfQXZHUaX">Batman</li>
+		<li data-rel="song" data-uri="spotify:track:5vk7ZSiv1ncel3mBRUHW26">Gladiator</li>
+	</ul>
+</div>
+<span data-rel="current-song"></span>
+<span data-rel="status"></span>
