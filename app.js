@@ -1,15 +1,19 @@
 var app = require('express').createServer()
 var io = require('socket.io').listen(app);
+var express = require('express');
 
 app.listen(8080);
 
-// routing
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+app.configure(function() {
+    app.set("view options", { layout: false, pretty: true });
+    app.use(express.favicon());
+    app.use(express.static(__dirname + '/public'));
 });
 
-// usernames which are currently connected to the chat
-var clients = {};
+// routing
+app.get('/', function (req, res) {
+	res.sendfile(__dirname + '/index.html');
+});
 
 io.sockets.on('connection', function (socket) {
 
