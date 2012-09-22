@@ -2,7 +2,7 @@ var app = require('express').createServer()
 var io = require('socket.io').listen(app);
 var express = require('express');
 
-app.listen(8080);
+app.listen(80);
 
 app.configure(function() {
     app.set("view options", { layout: false, pretty: true });
