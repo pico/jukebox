@@ -12,11 +12,11 @@ app.configure(function() {
 });
 
 // routing
-app.get('/', function (req, res) {
-    res.sendfile(__dirname + '/index.html');
-    //res.sendfile(__dirname + '/public/app.json');
-    //res.send(__dirname);
-});
+//app.get('/', function (req, res) {
+//    res.sendfile(__dirname + '/index.html');
+//    //res.sendfile(__dirname + '/public/app.json');
+//    //res.send(__dirname);
+//});
 
 app.get('/app.json', function (req, res) {
     res.send('hello !');
