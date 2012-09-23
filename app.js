@@ -15,6 +15,10 @@ app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
 });
 
+app.get('/app.json', function (req, res) {
+	res.sendfile(__dirname + '/public/app.json');
+});
+
 var players = {};
 
 io.sockets.on('connection', function (socket) {
