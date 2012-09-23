@@ -13,7 +13,8 @@ app.configure(function() {
 
 // routing
 app.get('/', function (req, res) {
-	res.sendfile(__dirname + '/index.html');
+    //res.sendfile(__dirname + '/index.html');
+    res.send(__dirname);
 });
 
 app.get('/app.json', function (req, res) {
