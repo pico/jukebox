@@ -12,21 +12,17 @@ app.configure(function() {
 });
 
 // routing
-//app.get('/', function (req, res) {
-//    res.sendfile(__dirname + '/index.html');
-//    //res.sendfile(__dirname + '/public/app.json');
-//    //res.send(__dirname);
-//});
-
-app.get('/app.json', function (req, res) {
-    res.send('hello !');
+app.get('/', function (req, res) {
+    res.sendfile(__dirname + '/index.html');
     //res.sendfile(__dirname + '/public/app.json');
+    //res.send(__dirname);
 });
 
-app.get('/app.blah', function (req, res) {
-    res.send('hello blah !');
-    //res.sendfile(__dirname + '/public/app.json');
+app.get('/app.activejson', function (req, res) {
+    
+    res.sendfile(__dirname + '/public/app.json');
 });
+
 var players = {};
 
 io.sockets.on('connection', function (socket) {
