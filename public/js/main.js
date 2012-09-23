@@ -1,12 +1,13 @@
 Ext.application({
     name: "AirJukeBox",
 
-    views: ["Start", "Response", "Question"],
+    views: ["SongList","Start", "Response", "Question", "Jukebox", "Search"],
     models: ["Song"],
     controllers:["Main"],
-    stores:["Songs"],
+    stores:["Songs", "Playlist"],
 
     launch: function () {
+
     	var mainView = {
             xtype: "start",
             id:'start'
@@ -19,7 +20,15 @@ Ext.application({
             xtype: "question",
             id:'question'
         };
-        Ext.Viewport.add(mainView, questionView, responseView);
+        var jukeboxView = {
+            xtype: "jukebox",
+            id:'jukebox'
+        };
+        var searchView = {
+            xtype: "search",
+            id:'search'
+        };
+        Ext.Viewport.add(mainView, questionView, responseView, jukeboxView, searchView);
 
         console.log("App launch");
     }

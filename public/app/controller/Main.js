@@ -4,7 +4,8 @@ Ext.define("AirJukeBox.controller.Main", {
     config: {
         refs: {
             // We're going to lookup our views by xtype.
-            goButton: "start button",
+            goButton: "start #blindTestButton",
+            jukeboxButton: "start #jukeboxButton",
             labelStatus : "start #labelConnexion",
             nameField: "start #pseudo",
             questionView: "question",
@@ -13,14 +14,26 @@ Ext.define("AirJukeBox.controller.Main", {
             goodResponse: "response #goodLabel",
             badResponse: "response #badLabel",
             tryAgain: "question #tryAgain",
-            responseButton: "question #responseButton"
+            responseButton: "question #responseButton",
+            searchList: "search",
+            jukeboxView : "jukebox"
         },
         control: {
             goButton: {
                 buttonGoClick: "onButtonGoClick"
             },
+            jukeboxButton: {
+                jukeboxClick: "onJukeboxClick"
+            },
             responseButton: {
                 newResponse: "onNewResponse"
+            },
+            searchList: {
+                songSelect: "onSongSelect",
+                backJukebox: "onBackJukeBox"
+            },
+            jukeboxView: {
+                goSearchView: "onGoSearchView"
             }
         },
         slideLeftTransition: {
@@ -28,19 +41,41 @@ Ext.define("AirJukeBox.controller.Main", {
             direction: 'left'
         },
         playerName: '',
-        lastResponseGood:false
+        lastResponseGood:false,
+        mode:''
+    },
+    onGoSearchView:function() {
+        Ext.Viewport.setActiveItem(5);
+    },
+    onBackJukeBox:function() {
+        Ext.Viewport.setActiveItem(4);
+    },
+    onJukeboxClick: function() {
+        this.mode = 'jukebox';
+        this.enter();
     },
     onButtonGoClick: function () {
+        this.mode = 'blindtest';
+        this.enter();
+    },
+    onSongSelect: function(list, record) {
+        this.socket.emit('add-song', this.playerName ,record.data.uri, record.data.title);
+        Ext.Viewport.setActiveItem(3);
+    },
+    enter: function() {
        // Check input value
        if(this.getNameField().getValue() === '') {
             Ext.Msg.alert("Enter a name");
        } else {
             this.socket.emit('add-player', this.getNameField().getValue());
-
             this.playerName = this.getNameField().getValue().toLowerCase();
 
             // Switch view
-            Ext.Viewport.setActiveItem(1);
+            if(this.mode == 'blindtest') {
+                Ext.Viewport.setActiveItem(1);
+            } else {
+                Ext.Viewport.setActiveItem(3);
+            }
            // Ext.Viewport.animateActiveItem(this.getQuestionView(), this.slideLeftTransition);
        }
     },
@@ -54,6 +89,7 @@ Ext.define("AirJukeBox.controller.Main", {
 
         this.callParent(arguments);
         Ext.getStore("Songs").load();
+        Ext.getStore("Playlist").load();
 
         var socket = io.connect('/');
 
@@ -63,6 +99,7 @@ Ext.define("AirJukeBox.controller.Main", {
             this.connected = true;
 
             controller.getGoButton().show();
+            controller.getJukeboxButton().show();
             controller.getLabelStatus().hide();
         });
 
@@ -103,21 +140,42 @@ Ext.define("AirJukeBox.controller.Main", {
             }
         });
 
-        socket.on('new-song', function () {
-            if(controller.currentScreen == 'question') {
-                // Stay on
-                controller.getTryAgain().hide();
+        socket.on('new-song', function (name, uri) {
+            console.log('new-song : ' + name);
+
+            var now = new Date();
+            var id = (now.getTime()).toString() + (controller.getRandomInt(0, 100)).toString();
+            var newSong = Ext.create("AirJukeBox.model.Song", {
+                id:id,
+                title:name,
+                uri:uri
+            });
+
+            if(controller.mode == 'jukebox') {
+                // Add song to the list
+                var playlist = Ext.getStore("Playlist");
+
+                playlist.add(newSong);
+                playlist.sync();
             } else {
-                // Switch screen
-                Ext.Viewport.setActiveItem(1);
-                controller.getTryAgain().hide();
-                //Ext.Viewport.animateActiveItem(controller.getQuestionView(), controller.slideLeftTransition);
+                if(controller.currentScreen == 'question') {
+                    // Stay on
+                    controller.getTryAgain().hide();
+                } else {
+                    // Switch screen
+                    Ext.Viewport.setActiveItem(1);
+                    controller.getTryAgain().hide();
+                    //Ext.Viewport.animateActiveItem(controller.getQuestionView(), controller.slideLeftTransition);
+                }
             }
         });
 
         this.socket = socket;
 
         console.log("launch");
+    },
+    getRandomInt: function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     init: function () {
         this.callParent(arguments);

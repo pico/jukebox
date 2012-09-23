@@ -53,8 +53,13 @@ io.sockets.on('connection', function (socket) {
 		//socket.broadcast.emit('update-song', uri, name);
 	});
 
-	socket.on('change-song', function () {
-		io.sockets.emit('new-song');
+	socket.on('change-song', function (name, uri) {
+		io.sockets.emit('new-song', name, uri);
+		//socket.broadcast.emit('update-song', uri, name);
+	});
+
+	socket.on('add-song', function (playerName, uri, name) {
+		io.sockets.emit('add-song-playlist', playerName, uri, name);
 		//socket.broadcast.emit('update-song', uri, name);
 	});
 

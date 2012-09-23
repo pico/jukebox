@@ -27,12 +27,27 @@ Ext.define("AirJukeBox.view.Start", {
             id: 'labelConnexion'
         };
 
-        var button = {
+        var buttonBlindtest = {
             xtype: "button",
-            text: "GO",
+            text: "Blindtest",
             handler: this.onButtonPress,
             name: 'goButton',
+            id: 'blindTestButton',
             hidden:true
+        };
+
+        var buttonJukebox = {
+            xtype: "button",
+            text: "Jukebox",
+            handler: this.onButtonJokeBoxPress,
+            name: 'jukeboxButton',
+            id: 'jukeboxButton',
+            hidden:true
+        };
+
+        var spacer = {
+            xtype:'spacer',
+            height:20
         };
 
         this.add([
@@ -45,7 +60,13 @@ Ext.define("AirJukeBox.view.Start", {
                         xtype:"fieldset", 
                         padding: 20, 
                         margin:5,
-                        items: [inputName,labelStatus,button]
+                        items: [inputName,
+                                spacer,
+                                labelStatus,
+                                spacer,
+                                buttonBlindtest,
+                                spacer,
+                                buttonJukebox]
                     }
                     
                 ]
@@ -57,5 +78,11 @@ Ext.define("AirJukeBox.view.Start", {
         console.log('on button press go');
 
         this.fireEvent('buttonGoClick', this);
+    },
+
+    onButtonJokeBoxPress:function() {
+        console.log('on button jukebox');
+
+        this.fireEvent('jukeboxClick', this);
     }
 });
