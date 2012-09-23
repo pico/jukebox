@@ -17,7 +17,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/app.json', function (req, res) {
-	res.sendfile(__dirname + '/public/app.json');
+	res.sendfile(__dirname + '/public/app.js');
 });
 
 var players = {};
