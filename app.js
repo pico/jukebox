@@ -23,6 +23,10 @@ app.get('/app.json', function (req, res) {
     //res.sendfile(__dirname + '/public/app.json');
 });
 
+app.get('/app.blah', function (req, res) {
+    res.send('hello blah !');
+    //res.sendfile(__dirname + '/public/app.json');
+});
 var players = {};
 
 io.sockets.on('connection', function (socket) {
